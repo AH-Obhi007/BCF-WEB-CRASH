@@ -13,7 +13,7 @@ A powerful HTTP & UDP flood testing tool for website stress and firewall testing
 
 ## Login
 - Username: BCF
-- Password: visit our Facebook page
+- Password: BCF2019
 
 ## Menu Options
 1. Web Down (HTTP Flood)
